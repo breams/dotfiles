@@ -1,0 +1,106 @@
+{
+    "title": "Change right command + fn keys to fn key",
+    "rules": [
+        {
+            "description": "Change right_command + fn keys to fn key",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "right_gui",
+                        "modifiers": {
+                            "mandatory": ["left_control"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                          "key_code": "fn",
+                          "modifiers": []
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "right_command",
+                        "modifiers": {
+                            "mandatory": ["left_control"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                          "key_code": "fn",
+                          "modifiers": []
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "left_control",
+                        "modifiers": {
+                            "mandatory": ["right_command"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                          "key_code": "fn",
+                          "modifiers": []
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "right_gui",
+                        "modifiers": {
+                            "mandatory": ["fn"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                          "key_code": "fn",
+                          "modifiers": []
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "right_command",
+                        "modifiers": {
+                            "mandatory": ["fn"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                          "key_code": "fn",
+                          "modifiers": []
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "fn",
+                        "modifiers": {
+                            "mandatory": ["right_command"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                          "key_code": "fn",
+                          "modifiers": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
