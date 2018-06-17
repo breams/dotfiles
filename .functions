@@ -1,13 +1,101 @@
 #!/usr/bin/env bash
 
-# Create a new directory and enter it
-function mkd() {
-	mkdir -p "$@" && cd "$_";
+function homestead {
+    ( cd ~/homestead && vagrant $* )
 }
 
-# Change working directory to the top-most Finder window location
-function cdf() { # short for `cdfinder`
-	cd "$(osascript -e 'tell app "Finder" to POSIX path of (insertion location as alias)')";
+function usenetup {
+    ( cd ~/docker/usenet && docker-compose up -d $* )
+}
+
+function usenetdown {
+    ( cd ~/docker/usenet && docker-compose down $* )
+}
+
+function update-stable-node {
+	if [[ ! -z ${NVM_DIR+x} ]] && \
+		[[ -n "$(type -t nvm)" ]] && [[ "$(type -t nvm)" == "function" ]] && \
+		[[ -n "$(type -t nvm_version_path)" ]] && [[ "$(type -t nvm_version_path)" == "function" ]]
+	then
+		if [[ -L "$NVM_DIR/stable" ]]; then
+			rm -f "$NVM_DIR/stable"
+		fi
+
+		ln -s $(nvm_version_path $(nvm version stable)) "$NVM_DIR/stable"
+
+		echo "Created link from $(nvm_version_path $(nvm version stable)) to $NVM_DIR/stable"
+	fi
+}
+
+function cleanupusb {
+	if [[ ! -z $(diskutil info $(pwd) | grep -E 'Device Location:\s+External') ]]; then
+		find . -name '._*' -delete
+		find . -name '.DS_Store' -delete
+		rm -rf .Spotlight-V100 .Trashes .fseventsd
+	else
+		echo "This command can only be run from an external drive"
+	fi
+}
+
+# Backup a file or folder
+function bak {
+	while (($#)); do
+		if [[ -r $1 && -w $(dirname $1) ]]; then
+			if [[ -d $1 ]]; then
+				cp -Rfp "$1" "$1.bak"
+			else
+				cp -i "$1" "$1.bak"
+			fi
+		fi
+		shift
+	done
+}
+
+# Unbackup a file or folder
+function unbak {
+	while (($#)); do
+		if [[ -d "$1.bak" ]]; then
+			mv -f "$1.bak" "$1"
+		elif [[ -f "$1.bak" ]]; then
+			mv -f "$1.bak" "$1"
+		fi
+		shift
+	done
+}
+
+# Backup a file of folder with date/time string in filename and exisiting extension
+function bakdate {
+	curDateTime=$(date +%Y%m%d-%H%M%S)
+	while (($#)); do
+		if [[ -d $1 ]]; then
+			cp -Rfp "$1" "$1-$curDateTime"
+		else
+			fullname=$(basename $1)
+			if [[ $fullname == *.* ]]; then
+				dirname=$(dirname $1)
+				filename="${fullname%%.*}"
+				extension="${fullname#*.}"
+				newName="$dirname/$filename-$curDateTime.$extension"
+			else
+				newName="$1-$curDateTime"
+			fi
+			cp -i "$1" "$newName"
+		fi
+		shift
+	done
+}
+
+# Temporarily serve a directory
+function serveme {
+	portnum=8888
+	while [[ -n $(lsof -ti :$portnum) ]] && [[ $portnum -lt 9000 ]]; do
+		let portnum++
+	done
+
+	if [[ $portnum -lt 9000 ]]; then
+		open "http://localhost:$portnum/"
+		php -d display_errors=0 -d log_errors=1 -d error_reporting=32767 -S localhost:$portnum
+	fi
 }
 
 # Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
@@ -32,7 +120,7 @@ function targz() {
 		fi;
 	fi;
 
-	echo "Compressing .tar ($((size / 1000)) kB) using \`${cmd}\`…";
+	echo "Compressing .tar ($((size / 1000)) kB) using \`${cmd}\`...";
 	"${cmd}" -v "${tmpFile}" || return 1;
 	[ -f "${tmpFile}" ] && rm "${tmpFile}";
 
@@ -58,13 +146,13 @@ function fs() {
 	fi;
 }
 
-# Use Git’s colored diff when available
-hash git &>/dev/null;
-if [ $? -eq 0 ]; then
-	function diff() {
-		git diff --no-index --color-words "$@";
-	}
-fi;
+# Use Git's colored diff when available
+#hash git &>/dev/null;
+#if [ $? -eq 0 ]; then
+#	function diff() {
+#		git diff --no-index --color-words "$@";
+#	}
+#fi;
 
 # Create a data URL from a file
 function dataurl() {
@@ -75,93 +163,7 @@ function dataurl() {
 	echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')";
 }
 
-# Start an HTTP server from a directory, optionally specifying the port
-function server() {
-	local port="${1:-8000}";
-	sleep 1 && open "http://localhost:${port}/" &
-	# Set the default Content-Type to `text/plain` instead of `application/octet-stream`
-	# And serve everything as UTF-8 (although not technically correct, this doesn’t break anything for binary files)
-	python -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n\tmap[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port";
-}
-
-# Start a PHP server from a directory, optionally specifying the port
-# (Requires PHP 5.4.0+.)
-function phpserver() {
-	local port="${1:-4000}";
-	local ip=$(ipconfig getifaddr en1);
-	sleep 1 && open "http://${ip}:${port}/" &
-	php -S "${ip}:${port}";
-}
-
-# Compare original and gzipped file size
-function gz() {
-	local origsize=$(wc -c < "$1");
-	local gzipsize=$(gzip -c "$1" | wc -c);
-	local ratio=$(echo "$gzipsize * 100 / $origsize" | bc -l);
-	printf "orig: %d bytes\n" "$origsize";
-	printf "gzip: %d bytes (%2.2f%%)\n" "$gzipsize" "$ratio";
-}
-
-# Syntax-highlight JSON strings or files
-# Usage: `json '{"foo":42}'` or `echo '{"foo":42}' | json`
-function json() {
-	if [ -t 0 ]; then # argument
-		python -mjson.tool <<< "$*" | pygmentize -l javascript;
-	else # pipe
-		python -mjson.tool | pygmentize -l javascript;
-	fi;
-}
-
-# Run `dig` and display the most useful info
-function digga() {
-	dig +nocmd "$1" any +multiline +noall +answer;
-}
-
-# UTF-8-encode a string of Unicode symbols
-function escape() {
-	printf "\\\x%s" $(printf "$@" | xxd -p -c1 -u);
-	# print a newline unless we’re piping the output to another program
-	if [ -t 1 ]; then
-		echo ""; # newline
-	fi;
-}
-
-# Show all the names (CNs and SANs) listed in the SSL certificate
-# for a given domain
-function getcertnames() {
-	if [ -z "${1}" ]; then
-		echo "ERROR: No domain specified.";
-		return 1;
-	fi;
-
-	local domain="${1}";
-	echo "Testing ${domain}…";
-	echo ""; # newline
-
-	local tmp=$(echo -e "GET / HTTP/1.0\nEOT" \
-		| openssl s_client -connect "${domain}:443" -servername "${domain}" 2>&1);
-
-	if [[ "${tmp}" = *"-----BEGIN CERTIFICATE-----"* ]]; then
-		local certText=$(echo "${tmp}" \
-			| openssl x509 -text -certopt "no_aux, no_header, no_issuer, no_pubkey, \
-			no_serial, no_sigdump, no_signame, no_validity, no_version");
-		echo "Common Name:";
-		echo ""; # newline
-		echo "${certText}" | grep "Subject:" | sed -e "s/^.*CN=//" | sed -e "s/\/emailAddress=.*//";
-		echo ""; # newline
-		echo "Subject Alternative Name(s):";
-		echo ""; # newline
-		echo "${certText}" | grep -A 1 "Subject Alternative Name:" \
-			| sed -e "2s/DNS://g" -e "s/ //g" | tr "," "\n" | tail -n +2;
-		return 0;
-	else
-		echo "ERROR: Certificate not found.";
-		return 1;
-	fi;
-}
-
-# `s` with no arguments opens the current directory in Sublime Text, otherwise
-# opens the given location
+# `s` with no arguments opens the current directory in Sublime Text, otherwise opens the given location
 function s() {
 	if [ $# -eq 0 ]; then
 		subl .;
@@ -170,8 +172,7 @@ function s() {
 	fi;
 }
 
-# `v` with no arguments opens the current directory in Vim, otherwise opens the
-# given location
+# `v` with no arguments opens the current directory in Vim, otherwise opens the given location
 function v() {
 	if [ $# -eq 0 ]; then
 		vim .;
@@ -180,8 +181,7 @@ function v() {
 	fi;
 }
 
-# `o` with no arguments opens the current directory, otherwise opens the given
-# location
+# `o` with no arguments opens the current directory, otherwise opens the given location
 function o() {
 	if [ $# -eq 0 ]; then
 		open .;
@@ -197,3 +197,23 @@ function o() {
 function tre() {
 	tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX;
 }
+
+# function mark2pdf {
+# 	while (($#)); do
+# 		fullname=$(basename "$1")
+# 		if [[ $fullname == *.* ]]; then
+# 			folder=$(dirname "$1")
+# 			filename="${fullname%%.*}"
+# 			extension="${fullname#*.}"
+# 			src="$1"
+# 			dest="$folder/$filename.pdf"
+# 		else
+# 			src="$1.md"
+# 			dest="$1.pdf"
+# 		fi
+# 		if [[ -r "$src" && -w $(dirname "$dest") ]]; then
+# 			pandoc --latex-engine=xelatex -V 'urlcolor:RoyalBlue' -V 'papersize:letterpaper' -V 'mainfont:Open Sans' -V 'geometry:margin=2cm' -S -o "$dest" "$src"
+# 		fi
+# 		shift
+# 	done
+# }
