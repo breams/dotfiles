@@ -1,0 +1,55 @@
+{
+    "title": "Change left command + right option keys to secondary mouse click",
+    "rules": [
+        {
+            "description": "Change left command + right option keys to secondary mouse click",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "right_option",
+                        "modifiers": {
+                            "mandatory": ["left_command"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                          "pointing_button": "button2"
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "left_command",
+                        "modifiers": {
+                            "mandatory": ["right_option"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                          "pointing_button": "button2"
+                        }
+                    ]
+                },
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "left_gui",
+                        "modifiers": {
+                            "mandatory": ["right_option"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                          "pointing_button": "button2"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
