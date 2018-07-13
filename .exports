@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Make vim the default editor.
-export EDITOR='vim';
+export EDITOR='subl -w';
 
 # Increase Bash history size. Allow 32^3 entries; the default is 500.
 export HISTSIZE='32768';
@@ -15,3 +15,6 @@ export LC_ALL='en_AU.UTF-8';
 
 # Don't clear the screen after quitting a manual page.
 export MANPAGER='less -X';
+
+PROMPT_TITLE='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\007"'
+export PROMPT_COMMAND="${PROMPT_TITLE}; ${PROMPT_COMMAND}"
