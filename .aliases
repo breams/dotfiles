@@ -87,6 +87,9 @@ alias cleanup="find . -type f \( -name '.DS_Store' -o -name '._*' \) -ls -delete
 # Enable aliases to be sudo'ed
 alias sudo='sudo '
 
+# Enable bash for sudo shell
+alias lvlup='sudo -s'
+
 # Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g'
 
