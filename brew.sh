@@ -31,6 +31,7 @@ brew install nmap
 brew install xz
 
 # Install other useful binaries.
+brew install duti
 brew install git
 brew install git-lfs
 brew install guetzli
