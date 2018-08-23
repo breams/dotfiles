@@ -98,7 +98,7 @@ alias path='echo -e ${PATH//:/\\n}'
 
 # IP info
 alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
-alias localip="ipconfig getifaddr en0"
+alias localip="networksetup -listallnetworkservices | grep -v '\*' | xargs -I{} networksetup -getinfo "{}" | grep -iE '^ip address: \d' | sed 's/ip address: //i'"
 
 # Set permisions to
 alias modownf='find . -type f -print0 | xargs -0 -I{} chmod 644 {}'
