@@ -37,12 +37,17 @@ eval "$(grunt --completion=bash)"
 # Add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
 [ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" scp sftp ssh;
 
+# Enable usage of ssh keys
+[ "$(find $HOME/.ssh \! -name 'config' \! -name 'known_hosts' -mindepth 1)" ] && eval "$(ssh-agent -s | grep -v '^echo .*')"
+
 # Add tab completion for `defaults read|write NSGlobalDomain`
 # You could just use `-g` instead, but I like being explicit
-complete -W "NSGlobalDomain" defaults;
+# complete -W "NSGlobalDomain" defaults;
 
 # Add `killall` tab completion for common apps
-complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
+# complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 # Needs to run after nvm.sh
 export PATH="$PATH:$NVM_DIR/stable/bin:$HOME/.composer/vendor/bin:$(gem env | grep 'USER INSTALLATION DIRECTORY' | sed -E 's#^.*: (/.*)$#\1/bin#')";
