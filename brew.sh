@@ -40,7 +40,7 @@ brew install pigz
 brew install pv
 brew install tree
 brew install unrar
-brew install yarn
+brew install yarn --without-node
 brew install zopfli
 
 # Remove outdated versions from the cellar.
