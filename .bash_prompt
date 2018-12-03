@@ -14,7 +14,7 @@ else
 fi;
 
 # Set the terminal title and prompt.
-PS1="\[${userStyle}\]\u: "; # username
+PS1="\[\033[${userStyle}\]\u: "; # username
 PS1+="\[\033[0;93m\]\w"; # working directory full path
 PS1+="\[\033[0;37m\] \$ \[\033[0m\]"; # `$` (and reset color)
 export PS1;
