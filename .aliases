@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-# Easier navi
-# ation: .., ..., ...., ..... and -
+# Easier navigation: .., ..., ...., ..... and -
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
@@ -27,10 +26,10 @@ fi
 # List all files colorized in long format
 alias ll="ls -lF ${colorflag}"
 
-# List all files colorized including dot files
+# List all files colorized including dot files, excluding . and ..
 alias la="ls -AF ${colorflag}"
 
-# List all files colorized in long format, including dot files
+# List all files colorized including dot files in long format, excluding . and ..
 alias lal="ls -lAF ${colorflag}"
 
 # Always use color output and no quoting for `ls`
