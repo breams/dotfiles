@@ -35,7 +35,7 @@ fi;
 eval "$(grunt --completion=bash)"
 
 # Add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
-[ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" scp sftp ssh;
+# [ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" scp sftp ssh;
 
 # Enable usage of ssh keys
 [ "$(find $HOME/.ssh \! -name 'config' \! -name 'known_hosts' -mindepth 1)" ] && eval "$(ssh-agent -s | grep -v '^echo .*')"
@@ -49,5 +49,26 @@ eval "$(grunt --completion=bash)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
+	# Set config variables first
+	GIT_PROMPT_ONLY_IN_REPO=1
+
+	GIT_PROMPT_FETCH_REMOTE_STATUS=0   # uncomment to avoid fetching remote status
+	GIT_PROMPT_IGNORE_SUBMODULES=1 # uncomment to avoid searching for changed files in submodules
+
+	# GIT_PROMPT_SHOW_UPSTREAM=1 # uncomment to show upstream tracking branch
+	GIT_PROMPT_SHOW_UNTRACKED_FILES=no # can be no, normal or all; determines counting of untracked files
+
+	GIT_PROMPT_SHOW_CHANGED_FILES_COUNT=0 # uncomment to avoid printing the number of changed files
+
+	# GIT_PROMPT_STATUS_COMMAND=gitstatus_pre-1.7.10.sh # uncomment to support Git older than 1.7.10
+
+	GIT_PROMPT_START='${DOCKER_MACHINE_STATUS}\[\033[${userStyle}\]\u: \[\033[0;93m\]\w\[\033[0m\]'
+	GIT_PROMPT_END_USER="\[\033[0;37m\] \$ \[\033[0m\]"
+	GIT_PROMPT_END_ROOT="\[\033[${userStyle}\] # \[\033[0m\]"
+
+	__GIT_PROMPT_DIR="$(brew --prefix)/opt/bash-git-prompt/share"
+	source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
+fi
 # Needs to run after nvm.sh
 export PATH="$PATH:$NVM_DIR/stable/bin:$HOME/.composer/vendor/bin:$(gem env | grep 'USER INSTALLATION DIRECTORY' | sed -E 's#^.*: (/.*)$#\1/bin#')";

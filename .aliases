@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Easier navigation: .., ..., ...., ..... and -
+# Easier navi
+# ation: .., ..., ...., ..... and -
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
@@ -98,7 +99,7 @@ alias path='echo -e ${PATH//:/\\n}'
 
 # IP info
 alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
-alias localip="networksetup -listallnetworkservices | grep -v '\*' | xargs -I{} networksetup -getinfo "{}" | grep -iE '^ip address: \d' | sed 's/ip address: //i'"
+alias localip="networksetup -listallnetworkservices | grep -v '\*' | xargs -I{} networksetup -getinfo "{}" | tr '[:upper:]' '[:lower:]' | grep -E '^ip address: \d' | sed 's/ip address: //'"
 
 # Set permisions to
 alias modownf='find . -type f -print0 | xargs -0 -I{} chmod 644 {}'
@@ -107,3 +108,15 @@ alias modgrpf='find . -type f -print0 | xargs -0 -I{} chmod 664 {}'
 alias modgrpd='find . -type d -print0 | xargs -0 -I{} chmod 775 {}'
 #alias modallf='find . -type f -print0 | xargs -0 -I{} chmod 666 {}'
 #alias modalld='find . -type d -print0 | xargs -0 -I{} chmod 777 {}'
+
+# Git aliases for easier completion
+alias gitbranch='git branch'
+alias gitcheckout='git checkout'
+alias gitcommit='git commit'
+alias gitdiff='git diff'
+alias gitlog='git log'
+alias gitmerge='git merge'
+alias gitpull='git pull'
+alias gitpush='git push'
+alias gitreset='git reset'
+alias gitstatus='git status'

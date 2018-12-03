@@ -17,8 +17,11 @@ brew install findutils
 # Install GNU `sed`, overwriting the built-in `sed`.
 brew install gnu-sed --with-default-names
 
-# Install bash completions
-brew install bash-completion
+# Install GNU `tar`
+brew install gnu-tar
+
+# Install bash and completions completions
+brew install bash bash-completion
 
 # Install `wget` with IRI support.
 brew install wget --with-iri
@@ -31,15 +34,25 @@ brew install nmap
 brew install xz
 
 # Install other useful binaries.
+brew install bash-git-prompt
+brew install bat
+brew install dnsmasq
+brew install docker-completion
+brew install docker-compose-completion
+brew install docker-machine-completion
 brew install duti
 brew install git
 brew install git-lfs
 brew install guetzli
+brew install lftp
 brew install lynx
+brew install php
 brew install pigz
 brew install pv
 brew install tree
 brew install unrar
+brew install wp-cli
+brew install wp-cli-completion
 brew install yarn --without-node
 brew install zopfli
 

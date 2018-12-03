@@ -8,16 +8,16 @@ fi;
 
 # Highlight the user name when logged in as root.
 if [[ "${USER}" == "root" ]]; then
-	userStyle="\e[1;31m";
+	userStyle="1;31m";
 else
-	userStyle="\e[90m";
+	userStyle="0;90m";
 fi;
 
 # Set the terminal title and prompt.
 PS1="\[${userStyle}\]\u: "; # username
-PS1+="\[\e[93;1m\]\w"; # working directory full path
-PS1+="\[\e[1;37m\] \$ \[\e[0m\]"; # `$` (and reset color)
+PS1+="\[\033[0;93m\]\w"; # working directory full path
+PS1+="\[\033[0;37m\] \$ \[\033[0m\]"; # `$` (and reset color)
 export PS1;
 
-PS2="\[\e[93;1m\]→ \[\e[0m\]";
+PS2="\[\033[93;1m\]→ \[\033[0m\]";
 export PS2;

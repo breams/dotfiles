@@ -67,6 +67,7 @@
 
 	# Detect copies as well as renames
 	renames = copies
+	tool = bc3
 
 [help]
 
@@ -77,6 +78,7 @@
 
 	# Include summaries of merged commits in newly created merge commit messages
 	log = true
+	tool = bc3
 
 [push]
 
@@ -115,4 +117,8 @@
 [mergetool "sourcetree"]
 
 	cmd = /usr/local/bin/bcomp \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\"
+	trustExitCode = true
+[difftool "bc3"]
+	trustExitCode = true
+[mergetool "bc3"]
 	trustExitCode = true

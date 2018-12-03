@@ -12,18 +12,33 @@ function usenetdown {
     ( cd ~/docker/usenet && docker-compose down $* )
 }
 
-function update-stable-node {
+function update-latest-node {
 	if [[ ! -z ${NVM_DIR+x} ]] && \
 		[[ -n "$(type -t nvm)" ]] && [[ "$(type -t nvm)" == "function" ]] && \
 		[[ -n "$(type -t nvm_version_path)" ]] && [[ "$(type -t nvm_version_path)" == "function" ]]
 	then
-		if [[ -L "$NVM_DIR/stable" ]]; then
-			rm -f "$NVM_DIR/stable"
+		if [[ -L "$NVM_DIR/latest" ]]; then
+			rm -f "$NVM_DIR/latest"
 		fi
 
-		ln -s $(nvm_version_path $(nvm version stable)) "$NVM_DIR/stable"
+		ln -s $(nvm_version_path $(nvm version stable)) "$NVM_DIR/latest"
 
-		echo "Created link from $(nvm_version_path $(nvm version stable)) to $NVM_DIR/stable"
+		echo "Created link from $(nvm_version_path $(nvm version stable)) to $NVM_DIR/latest"
+	fi
+}
+
+function update-default-node {
+	if [[ ! -z ${NVM_DIR+x} ]] && \
+		[[ -n "$(type -t nvm)" ]] && [[ "$(type -t nvm)" == "function" ]] && \
+		[[ -n "$(type -t nvm_version_path)" ]] && [[ "$(type -t nvm_version_path)" == "function" ]]
+	then
+		if [[ -L "$NVM_DIR/default" ]]; then
+			rm -f "$NVM_DIR/default"
+		fi
+
+		ln -s $(nvm_version_path $(nvm version default)) "$NVM_DIR/default"
+
+		echo "Created link from $(nvm_version_path $(nvm version default)) to $NVM_DIR/default"
 	fi
 }
 
